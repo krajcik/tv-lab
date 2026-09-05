@@ -16,9 +16,16 @@ import java.util.Arrays;
 
 /** Run only on a disposable emulator; this resets its app preferences and imported test image. */
 public final class SmokeInstrumentation extends Instrumentation {
-    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments); start(); }
+    private boolean fontPreviews;
+    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments);fontPreviews=arguments!=null&&"true".equals(arguments.getString("fontPreviews"));start(); }
 
     @Override public void onStart() {
+        if(fontPreviews){
+            Bundle result=new Bundle();
+            try{FontPreviews.write(getTargetContext());result.putString("stream","PASS: three native Cyrillic font previews generated\n");finish(Activity.RESULT_OK,result);}
+            catch(Exception error){result.putString("stream",android.util.Log.getStackTraceString(error));finish(Activity.RESULT_CANCELED,result);}
+            return;
+        }
         Bundle result = new Bundle();
         Activity activity = null;
         File source = new File(getTargetContext().getCacheDir(), "orientation-test.jpg");
@@ -27,11 +34,34 @@ public final class SmokeInstrumentation extends Instrumentation {
             DreamConfig.preferences(getTargetContext()).edit().clear().commit();
             Files.deleteIfExists(output.toPath());
             DreamConfig defaults = new DreamConfig(getTargetContext());
-            require(!defaults.text && defaults.pictures, "Defaults must show animals, not phrases");
-            float[][] scenes = SceneFactory.create(getTargetContext(), defaults);
-            require(scenes.length == 3, "Default playlist must have three animals");
-            for (float[] scene : scenes) require(scene.length >= 1000, "Animal must have a nonempty point cloud");
-            require(!Arrays.equals(scenes[0], scenes[1]) && !Arrays.equals(scenes[1], scenes[2]), "Animal scenes must differ");
+            require(!defaults.text && defaults.pictures && defaults.quotes, "Defaults must show the image and quote libraries");
+            java.util.List<QuoteLibrary.Quote> quotes=QuoteLibrary.read(getTargetContext());
+            require(quotes.size()==100,"Curated library must contain 100 verified stoic quotations");
+            android.graphics.Paint paint=new android.graphics.Paint();paint.setTextSize(48);
+            for(QuoteLibrary.Quote quote:quotes){
+                require(java.util.Arrays.asList("Сенека","Марк Аврелий","Эпиктет").contains(quote.author)&&!quote.work.isEmpty()&&quote.source.startsWith("https://"),"Each quote needs attribution and a source");
+                for(String line:SceneFactory.wrap(quote.text,paint,576))require(paint.measureText(line)<=576.1f,"Quote line must fit the screen");
+            }
+            for(String line:SceneFactory.wrap(new String(new char[100]).replace("\0","W"),paint,576))require(paint.measureText(line)<=576.1f,"Unbroken custom words must wrap");
+            java.util.List<String> wrapped=SceneFactory.wrap("Спокойная мысль помогает увидеть происходящее яснее и не спешить с суждением",paint,576);
+            require(android.text.TextUtils.join(" ",wrapped).equals("Спокойная мысль помогает увидеть происходящее яснее и не спешить с суждением"),"Natural phrases must wrap at word boundaries");
+            int defaultCount=2*Math.max(SceneFactory.BUILTIN_IMAGES,quotes.size());
+            int uniqueCount=SceneFactory.BUILTIN_IMAGES+quotes.size();
+            ScenePlaylist catalogue=SceneFactory.playlist(getTargetContext(),defaults);
+            require(catalogue.size()==defaultCount,"Default playlist must contain the full alternating catalogue");
+            java.util.Set<SceneSource> recipes=java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+            java.util.Set<Integer> unique=new java.util.HashSet<>();
+            for(SceneSource recipe:catalogue.sources)if(recipes.add(recipe)){
+                float[] cloud=recipe.load();ScenePlaylist.validate(cloud);
+                require(cloud.length>=1000,"Each asset must produce a nonempty cloud");unique.add(Arrays.hashCode(cloud));
+            }
+            require(recipes.size()==uniqueCount&&unique.size()==uniqueCount,"All112 unique scene recipes must materialize correctly");
+            try(SceneCache cache=new SceneCache(catalogue)){
+                cache.prepareInitial();long deadline=System.nanoTime()+5_000_000_000L;
+                while(cache.peek(2)==null&&System.nanoTime()<deadline)Thread.sleep(5);
+                require(cache.peek(2)!=null,"Real asset prefetch should complete");
+                require(cache.residentCount()<=3&&cache.residentBytes()<=3L*1024*1024,"Real Android cache must remain bounded");
+            }
 
             activity = startActivitySync(new Intent(getTargetContext(), SettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             waitForIdleSync();
@@ -55,7 +85,7 @@ public final class SmokeInstrumentation extends Instrumentation {
             require(imported != null && imported.getWidth() == 40 && imported.getHeight() == 80, "Import must apply EXIF rotation");
             imported.recycle();
             require(Arrays.equals(original, Files.readAllBytes(source.toPath())), "Import must preserve the original file");
-            require(SceneFactory.create(getTargetContext(), defaults).length == 1, "A custom image must replace the default animals");
+            require(uniqueRecipes(SceneFactory.playlist(getTargetContext(), defaults)) == 1+quotes.size(), "A custom image must replace all standard image recipes");
             Files.write(source.toPath(), new byte[] {1, 2, 3});
             try { importer.invoke(activity, Uri.fromFile(source)); throw new AssertionError("Invalid image accepted"); }
             catch (java.lang.reflect.InvocationTargetException expected) {
@@ -63,9 +93,9 @@ public final class SmokeInstrumentation extends Instrumentation {
             }
             require(output.isFile(), "A failed import must preserve the previous image");
             Files.deleteIfExists(output.toPath());
-            require(SceneFactory.create(getTargetContext(), defaults).length == 3, "Removing custom image must restore animals");
+            require(uniqueRecipes(SceneFactory.playlist(getTargetContext(), defaults)) == uniqueCount, "Removing custom image must restore all standard scenes");
             String gpuResult=GpuParityTest.run(this,activity);
-            result.putString("stream", "PASS: default animals, settings launch, EXIF rotation, original preserved, custom replacement, failed import recovery, default restoration; "+gpuResult+"\n");
+            result.putString("stream", "PASS: default animals, settings launch, EXIF rotation, original preserved, custom replacement, failed import recovery, default restoration; 12 images, 100 attributed stoic quotes, wrapping, lazy bounded cache; "+gpuResult+"\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable error) {
             result.putString("stream", android.util.Log.getStackTraceString(error));
@@ -75,6 +105,8 @@ public final class SmokeInstrumentation extends Instrumentation {
             source.delete(); output.delete();
         }
     }
+
+    private static int uniqueRecipes(ScenePlaylist playlist){java.util.Set<SceneSource> unique=java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());java.util.Collections.addAll(unique,playlist.sources);return unique.size();}
 
     private static void require(boolean condition, String message) {
         if (!condition) throw new AssertionError(message);

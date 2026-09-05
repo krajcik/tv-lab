@@ -9,6 +9,7 @@ uniform sampler2D uField;
 uniform sampler2D uMean;
 uniform vec4 uClock; // dt, time, phase, motion
 uniform float uCycle;
+uniform vec4 uFormation; // build, release start, release end, text flag
 out vec4 nextMotion;
 out vec2 nextCaptureImpact;
 out float vAlpha;
@@ -17,11 +18,11 @@ void main(){
     float dt=uClock.x,t=uClock.y,phase=uClock.z,motion=uClock.w;
     vec2 p=aMotion.xy,velocity=aMotion.zw;
     float seed=aProperties.x,capture=aCaptureImpact.x,impact=aCaptureImpact.y;
-    float peak=min(4.,uCycle*.32),release=peak+min(.9,uCycle*.22);
-    float end=min(uCycle*.95,release+min(.95,uCycle*.17));
+    float peak=uFormation.x,release=uFormation.y,end=uFormation.z;
+    bool words=uFormation.w>.5;
     float local=phase-(aProperties.z-.5)*min(.25,uCycle*.04);
     float likeness=smoothstep(0.,peak,local)*(1.-smoothstep(release,end,local));
-    float desired=aProperties.w>.5 ? 0. : min(.99,likeness*1.0626*(.9+.1*sin(t*2.7+seed*9.)));
+    float desired=aProperties.w>.5 ? 0. : min(.99,likeness*(words?1.02:1.0626*(.9+.1*sin(t*2.7+seed*9.))));
     capture+=(desired-capture)*(1.-exp(-dt*(desired<capture?7.:2.8)));
     if(capture<.00001)capture=0.;
     vec2 grid=clamp((p+extent)/(2.*extent)*vec2(64.,48.),vec2(0.),vec2(63.9999,47.9999));
@@ -31,9 +32,9 @@ void main(){
     field-=texelFetch(uMean,ivec2(0),0).rg;
     vec2 target=aTarget.xy+aOffset;
     vec2 sway=vec2(.023*sin(t*.29),-.02+.019*cos(t*.23));
-    target+=sway+.011*vec2(sin(t*2.8+seed*31.+target.y*18.),cos(t*2.4+seed*27.+target.x*19.));
-    float freedom=.28+.72*(1.-capture)*(1.-capture),pull=30.*capture*capture*capture;
-    float damping=6.1*capture,layer=.8+floor(seed*4.)*.15,response=1.8+mod(seed,.25)*4.;
+    target+=sway+(words?.002:.011)*vec2(sin(t*2.8+seed*31.+target.y*18.),cos(t*2.4+seed*27.+target.x*19.));
+    float freedom=(.28+.72*(1.-capture)*(1.-capture))*(words?.36:1.),pull=(words?90.:30.)*capture*capture*capture;
+    float damping=(words?16.1:6.1)*capture,layer=.8+floor(seed*4.)*.15,response=1.8+mod(seed,.25)*4.;
     velocity+=((field*layer*motion-velocity)*response*freedom+(target-p)*pull-velocity*damping)*dt;
     float speed=length(velocity);if(speed>2.5)velocity*=2.5/speed;
     p+=velocity*dt;impact*=exp(-dt*5.);

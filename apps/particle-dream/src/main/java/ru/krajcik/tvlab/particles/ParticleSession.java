@@ -18,15 +18,32 @@ final class ParticleSession {
     private ParticleView view;
     private boolean running;
     private volatile boolean closed;
+    private volatile SceneCache cache;
 
     ParticleSession(Context context){
         this.context=context;content=new FrameLayout(context);content.setBackgroundColor(Color.BLACK);
         worker.execute(()->{
-            DreamConfig config=new DreamConfig(context);
-            float[][] scenes=SceneFactory.create(context,config);
-            if(closed)return;
-            ParticleEngine engine=new ParticleEngine(config.count,scenes,config.cycleSeconds,0);
-            main.post(()->{if(!closed){pending=engine;attach();}});
+            try {
+                DreamConfig config=new DreamConfig(context);
+                ScenePlaylist scenes=SceneFactory.playlist(context.getApplicationContext(),config);
+                if(closed)return;
+                SceneCache prepared=new SceneCache(scenes);cache=prepared;
+                if(closed){prepared.close();return;}
+                prepared.prepareInitial();
+                if(closed){prepared.close();return;}
+                ParticleEngine engine=new ParticleEngine(config.count,scenes,prepared,config.cycleSeconds,0);
+                main.post(()->{if(!closed){pending=engine;attach();}});
+            } catch(Exception error) {
+                if(cache!=null)cache.close();
+                if(!closed)main.post(()->{
+                    if(closed)return;
+                    android.util.Log.e("ParticleSession","Scene preparation failed",error);
+                    android.widget.TextView message=new android.widget.TextView(context);
+                    message.setText("Не удалось подготовить заставку. Попробуйте открыть настройки заново.");
+                    message.setTextColor(Color.WHITE);message.setGravity(android.view.Gravity.CENTER);
+                    content.addView(message,new FrameLayout.LayoutParams(-1,-1));
+                });
+            }
         });
     }
     private void attach(){
@@ -36,5 +53,5 @@ final class ParticleSession {
     }
     void resume(){running=true;if(view!=null)view.onResume();else attach();}
     void pause(){running=false;if(view!=null)view.onPause();}
-    void close(){closed=true;pause();worker.shutdownNow();pending=null;content.removeAllViews();view=null;}
+    void close(){closed=true;pause();worker.shutdownNow();if(cache!=null)cache.close();pending=null;content.removeAllViews();view=null;}
 }

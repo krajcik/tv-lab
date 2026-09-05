@@ -69,3 +69,11 @@ OpenGL ES 3.0. Точки рисуются сразу в конечную 4K-п�
 [GLSurfaceView](https://developer.android.com/reference/android/opengl/GLSurfaceView),
 [Surface frame rate](https://developer.android.com/reference/android/view/Surface),
 [OpenGL ES 3.0 spec](https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf).
+
+## Изменения 0.3 по запросу пользователя
+
+Для текста теперь отдельно заданы8 секунд сборки,20 секунд удержания и5 секунд
+распада. Для изображений —6 /3.9 /3 секунды. Физика свободного потока сохранена;
+для текста усилено притяжение, увеличено демпфирование и уменьшено локальное
+дрожание букв. Это намеренное изменение ради чтения, а не утверждение о
+совпадении этих интервалов с оригинальным сайтом.

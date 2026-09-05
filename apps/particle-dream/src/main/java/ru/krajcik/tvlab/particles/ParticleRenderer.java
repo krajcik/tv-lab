@@ -20,7 +20,7 @@ final class ParticleRenderer implements GLSurfaceView.Renderer {
     private final FloatBuffer targetData;
     private final int[] states=new int[2], vaos=new int[2];
     private int properties, targets, fieldTexture, simulation, points, trails;
-    private int clockUniform, cycleUniform, pointPixels, trailPixels, fieldUniform, meanUniform;
+    private int clockUniform, cycleUniform, formationUniform, pointPixels, trailPixels, fieldUniform, meanUniform;
     private int fieldProgram, meanProgram, fieldBuffer, meanBuffer, meanTexture, emptyVao;
     private int centersUniform, shapesUniform, seedsUniform, flowTimeUniform, meanFieldUniform;
     private int current, targetScene=-1, width, height;
@@ -40,6 +40,7 @@ final class ParticleRenderer implements GLSurfaceView.Renderer {
         trails=program(R.raw.trails_vert,R.raw.flat_frag,null);
         clockUniform=GLES30.glGetUniformLocation(simulation,"uClock");
         cycleUniform=GLES30.glGetUniformLocation(simulation,"uCycle");
+        formationUniform=GLES30.glGetUniformLocation(simulation,"uFormation");
         fieldUniform=GLES30.glGetUniformLocation(simulation,"uField");
         meanUniform=GLES30.glGetUniformLocation(simulation,"uMean");
         fieldProgram=program(R.raw.field_vert,R.raw.flat_frag,new String[]{"nextField"});
@@ -119,6 +120,7 @@ final class ParticleRenderer implements GLSurfaceView.Renderer {
         GLES30.glUseProgram(simulation);GLES30.glUniform1i(fieldUniform,0);GLES30.glUniform1i(meanUniform,1);
         GLES30.glUniform4f(clockUniform,engine.dt,engine.time,engine.phase,engine.motion);
         GLES30.glUniform1f(cycleUniform,engine.cycleSeconds());
+        GLES30.glUniform4f(formationUniform,engine.timeline.build,engine.timeline.releaseStart,engine.timeline.releaseEnd,engine.timeline.text[engine.sceneIndex()]?1:0);
         GLES30.glBindVertexArray(vaos[current]);
         // VAO attribute 5 references the previous state. Disable it during transform feedback.
         GLES30.glDisableVertexAttribArray(5);
@@ -177,6 +179,15 @@ final class ParticleRenderer implements GLSurfaceView.Renderer {
         if(mapped==null)throw new IllegalStateException("State readback failed");
         float[] result=new float[engine.state.length];mapped.order(ByteOrder.nativeOrder()).asFloatBuffer().get(result);
         GLES30.glUnmapBuffer(GLES30.GL_ARRAY_BUFFER);GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);return result;
+    }
+
+    /** Instrumentation only: start the next comparison block from identical particle states. */
+    void synchronizeTestState(float[] reference){
+        if(reference.length!=engine.state.length)throw new IllegalArgumentException("State length mismatch");
+        FloatBuffer data=floats(reference.length);data.put(reference).position(0);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,states[current]);
+        GLES30.glBufferSubData(GLES30.GL_ARRAY_BUFFER,0,reference.length*4,data);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);
     }
 
     private static void attribute(int index,int size,int buffer,int stride,int offset){

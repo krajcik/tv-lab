@@ -37,8 +37,8 @@ public final class SettingsActivity extends Activity {
     private static final int PICK_IMAGE = 1;
     private final ExecutorService io = Executors.newSingleThreadExecutor();
     private EditText phrases;
-    private CheckBox text, pictures, slow;
-    private Spinner quality;
+    private CheckBox text, pictures, slow, quotes;
+    private Spinner quality, font;
     private TextView imageStatus;
     private Button importButton, deleteButton;
     private boolean importing;
@@ -72,7 +72,17 @@ public final class SettingsActivity extends Activity {
 
         label(content, "Что появляется из частиц", 22, Color.WHITE);
         DreamConfig config = new DreamConfig(this);
-        text = checkbox(content, "Текстовые фразы", config.text);
+        quotes = checkbox(content, "Цитаты стоиков", config.quotes);
+        label(content, "Сенека, Марк Аврелий и Эпиктет. С подписью автора.", 14, 0xFF91A1AE);
+        label(content, "Шрифт текста", 16, 0xFFB7C3CD);
+        font = new Spinner(this);font.setId(R.id.font);
+        ArrayAdapter<String> fonts = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
+                new String[]{"Книжный · с засечками", "Лёгкий · без засечек", "Компактный · узкий"});
+        fonts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        font.setAdapter(fonts);font.setContentDescription("Шрифт текста");
+        font.setSelection(config.font.equals(DreamConfig.FONTS[1])?1:config.font.equals(DreamConfig.FONTS[2])?2:0);
+        content.addView(font,new LinearLayout.LayoutParams(-1,dp(56)));
+        text = checkbox(content, "Свои фразы", config.text);
         phrases = new EditText(this);
         phrases.setId(R.id.phrases);
         phrases.setText(config.phrases);
@@ -86,7 +96,7 @@ public final class SettingsActivity extends Activity {
         phrases.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1212)});
         content.addView(phrases, new LinearLayout.LayoutParams(-1, -2));
         label(content, "До 12 фраз, до 100 символов в каждой. Короткие фразы лучше читаются с дивана.", 13, 0xFF91A1AE);
-        pictures = checkbox(content, "Картинки: ретривер, бобтейл и рэгдолл или ваше изображение", config.pictures);
+        pictures = checkbox(content, "Картинки: животные, природа и космос или ваше изображение", config.pictures);
         imageStatus = label(content, "", 14, 0xFFB7C3CD);
         LinearLayout imageButtons = row(content);
         importButton = button(imageButtons, "Добавить картинку", () -> {
@@ -104,7 +114,8 @@ public final class SettingsActivity extends Activity {
         updateImageStatus();
 
         label(content, "Движение", 22, Color.WHITE);
-        slow = checkbox(content, "Длинная пауза между образами · 32 секунды", config.cycleSeconds == 32);
+        label(content, "Текст: сборка 8 с, чтение 20 с, распад 5 с. Изображения: 6 / 3,9 / 3 с.", 14, 0xFF91A1AE);
+        slow = checkbox(content, "Длинные паузы между образами", config.cycleSeconds == 32);
         label(content, "Количество частиц", 16, 0xFFB7C3CD);
         quality = new Spinner(this);
         quality.setId(R.id.quality);
@@ -132,7 +143,7 @@ public final class SettingsActivity extends Activity {
             cleaned.append(value, 0, Math.min(value.length(), 100));
         }
         DreamConfig.preferences(this).edit().putString("phrases", cleaned.toString())
-                .putBoolean("text", text.isChecked()).putBoolean("pictures", pictures.isChecked())
+                .putString("font", DreamConfig.FONTS[font.getSelectedItemPosition()]).putBoolean("quotes", quotes.isChecked()).putBoolean("text", text.isChecked()).putBoolean("pictures", pictures.isChecked())
                 .putBoolean("long_cycle", slow.isChecked()).putInt("count", new int[] {50000, 100000, 200000}[quality.getSelectedItemPosition()])
                 .apply();
     }
@@ -205,7 +216,7 @@ public final class SettingsActivity extends Activity {
 
     private void updateImageStatus() {
         boolean exists = imageFile().isFile();
-        imageStatus.setText(exists ? "Своя картинка заменяет стандартных животных. Новая заменит её." : "По очереди: золотистый ретривер, курильский бобтейл, рэгдолл.");
+        imageStatus.setText(exists ? "Своя картинка заменяет стандартный набор. Новая заменит её." : "12 образов: животные, природа и космос.");
         deleteButton.setEnabled(exists && !importing);
     }
 
