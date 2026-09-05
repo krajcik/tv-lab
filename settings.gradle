@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories { google(); mavenCentral(); gradlePluginPortal() }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories { google(); mavenCentral() }
+}
+rootProject.name = 'tv-lab'
+include ':particle-dream'
+project(':particle-dream').projectDir = file('apps/particle-dream')

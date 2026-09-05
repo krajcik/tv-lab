@@ -1,0 +1,4 @@
+<resources>
+    <item name="phrases" type="id" />
+    <item name="quality" type="id" />
+</resources>
