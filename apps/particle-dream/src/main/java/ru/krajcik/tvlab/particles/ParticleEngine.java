@@ -1,102 +1,123 @@
 package ru.krajcik.tvlab.particles;
 
-import java.util.Random;
-
-/** Pure Java simulation. Coordinates are in a 16:9 world, independent of output resolution. */
+/** CPU reference for the GPU integrator, plus the shared low-resolution flow-field controller. */
 public final class ParticleEngine {
-    public static final float ASPECT = 16f / 9f;
-    private static final int GRID_X = 64, GRID_Y = 36, STRIDE = GRID_X + 1;
-    public final float[] x, y;
-    private final float[] vx, vy, fieldX = new float[STRIDE * (GRID_Y + 1)],
-            fieldY = new float[STRIDE * (GRID_Y + 1)];
+    static final int STATE_STRIDE = 6, PROPERTY_STRIDE = 6, TARGET_STRIDE = 4;
+    final int count;
+    final float[] state, properties, targets;
+    FlowField field = new FlowField();
     private final float[][] scenes;
-    private final float cycleSeconds;
+    private final float cycle;
     private double elapsed;
     private int scene;
-    private float morph;
+    float time, phase, motion, dt, flowTime;
 
     public ParticleEngine(int count, float[][] scenes, float cycleSeconds, long seed) {
         if (count <= 0 || scenes.length == 0 || !Float.isFinite(cycleSeconds) || cycleSeconds < 8)
             throw new IllegalArgumentException("Invalid simulation configuration");
         for (float[] points : scenes) {
-            if (points.length < 2 || points.length % 2 != 0)
-                throw new IllegalArgumentException("Empty or unpaired target points");
-            for (float p : points) if (!Float.isFinite(p))
-                throw new IllegalArgumentException("Non-finite target point");
+            if (points.length < 4 || points.length % 4 != 0)
+                throw new IllegalArgumentException("Targets must contain x, y, light, edge");
+            for (float point : points) if (!Float.isFinite(point)) throw new IllegalArgumentException("Non-finite target");
         }
-        this.scenes = scenes;
-        this.cycleSeconds = cycleSeconds;
-        x = new float[count]; y = new float[count];
-        vx = new float[count]; vy = new float[count];
-        Random random = new Random(seed);
+        this.count = count; this.scenes = scenes; cycle = cycleSeconds;
+        state = new float[count * STATE_STRIDE];
+        properties = new float[count * PROPERTY_STRIDE];
+        targets = new float[count * TARGET_STRIDE];
+        // Stable reference random function; seed only shifts the initial free-flow distribution.
+        long epoch = Math.floorMod(seed, 10000);
         for (int i = 0; i < count; i++) {
-            x[i] = (random.nextFloat() * 2 - 1) * ASPECT;
-            y[i] = random.nextFloat() * 2 - 1;
+            int s = i * 6;
+            state[s] = (FlowField.random(i * 3 + epoch + 101) - .5f) * FlowField.EXTENT_X * 2;
+            state[s + 1] = (FlowField.random(i * 3 + epoch + 503) - .5f) * FlowField.EXTENT_Y * 2;
+            int id = i * 11;
+            properties[s] = FlowField.random(id + 7);
+            properties[s + 1] = (.17f + FlowField.random(id + 57) * .17f) * 1.21f;
+            properties[s + 2] = FlowField.random(id + 73);
+            properties[s + 3] = FlowField.random(id + 113) > .945f ? 1 : 0;
+            properties[s + 4] = (FlowField.random(id + 19) - .5f) * .0024f;
+            properties[s + 5] = (FlowField.random(id + 31) - .5f) * .0024f;
         }
+        selectScene(0);
     }
 
     public int sceneIndex() { return scene; }
-    public float morphAmount() { return morph; }
+    float cycleSeconds() { return cycle; }
+
+    void restartAfterContextLoss() {
+        elapsed=0;time=phase=motion=dt=flowTime=0;
+        field=new FlowField();selectScene(0);
+    }
+
+    private void selectScene(int index) {
+        scene = index;
+        float[] source = scenes[index];
+        if(source.length>=targets.length){System.arraycopy(source,0,targets,0,targets.length);return;}
+        for (int i = 0; i < targets.length; i += 4)
+            System.arraycopy(source, i % source.length, targets, i, 4);
+    }
+
+    /** Advances only the global state. Per-particle work normally runs in GLES transform feedback. */
+    void advance(float seconds) { advance(seconds, false); }
+
+    private void advance(float seconds, boolean cpuField) {
+        dt = Float.isFinite(seconds) && seconds > 0 ? Math.min(seconds, .045f) : 0;
+        elapsed += dt; time = (float) elapsed;
+        float peak = Math.min(4, cycle * .32f), firstStart = 15 - peak;
+        long appearance = Math.max(0, (long) Math.floor((elapsed - firstStart) / cycle));
+        int next = (int) (appearance % scenes.length);
+        if (next != scene) selectScene(next);
+        phase = (float) (elapsed - (firstStart + appearance * cycle));
+        motion = .18f + .82f * FlowField.smooth(0, 20, time);
+        float u = Math.max(0, Math.min(1, time / 20));
+        flowTime = time < 20 ? .18f * time + 16.4f * (u*u*u - .5f*u*u*u*u) : time - 8.2f;
+        if (cpuField) field.update(flowTime, dt * motion);
+        else field.advanceVortices(flowTime, dt * motion);
+    }
 
     public void step(float seconds) {
         if (!Float.isFinite(seconds) || seconds <= 0) return;
-        // A resumed view must not simulate all the time it spent asleep.
-        float dt = Math.min(seconds, 0.05f);
-        elapsed += dt;
-        scene = (int) ((long) (elapsed / cycleSeconds) % scenes.length);
-        float phase = (float) ((elapsed % cycleSeconds) / cycleSeconds);
-        morph = phase < .32f ? 0 : phase < .51f ? smooth((phase - .32f) / .19f)
-                : phase < .73f ? 1 : phase < .94f ? 1 - smooth((phase - .73f) / .21f) : 0;
-        float time = (float) (elapsed % 10000);
-        updateField(time);
-        float[] target = scenes[scene];
-        float damping = (float) Math.exp(-dt * (.65f + morph * 3.2f));
-        float shiftX = .07f * (float) Math.sin(time * .13f);
-        float shiftY = .04f * (float) Math.cos(time * .17f);
-        for (int i = 0; i < x.length; i++) {
-            float gx = Math.max(0, Math.min(GRID_X - .001f, (x[i] / ASPECT + 1) * .5f * GRID_X));
-            float gy = Math.max(0, Math.min(GRID_Y - .001f, (y[i] + 1) * .5f * GRID_Y));
-            int ix = (int) gx, iy = (int) gy, at = iy * STRIDE + ix;
-            float fx = gx - ix, fy = gy - iy;
-            float ax = interpolate(fieldX, at, fx, fy), ay = interpolate(fieldY, at, fx, fy);
-            int point = (i % (target.length / 2)) * 2;
-            // Keep a sparse layer moving around the image so a scene never becomes a static slide.
-            float pull = i % 13 == 0 ? 0 : morph;
-            ax = ax * (1 - pull * .96f) + (target[point] + shiftX - x[i]) * pull * 12;
-            ay = ay * (1 - pull * .96f) + (target[point + 1] + shiftY - y[i]) * pull * 12;
-            vx[i] = (vx[i] + ax * dt) * damping;
-            vy[i] = (vy[i] + ay * dt) * damping;
-            x[i] += vx[i] * dt; y[i] += vy[i] * dt;
-            // Wrap the field so outward flow cannot accumulate into stationary bright screen edges.
-            if (x[i] > ASPECT) x[i] -= ASPECT * 2;
-            if (x[i] < -ASPECT) x[i] += ASPECT * 2;
-            if (y[i] > 1) y[i] -= 2;
-            if (y[i] < -1) y[i] += 2;
-        }
-    }
-
-    private void updateField(float time) {
-        float cx = .72f * (float) Math.sin(time * .12f), cy = .35f * (float) Math.cos(time * .15f);
-        for (int j = 0; j <= GRID_Y; j++) {
-            float py = j * 2f / GRID_Y - 1;
-            for (int i = 0; i <= GRID_X; i++) {
-                float px = (i * 2f / GRID_X - 1) * ASPECT;
-                float dx = px - cx, dy = py - cy;
-                float spin = .3f / (.3f + dx * dx + dy * dy);
-                int at = j * STRIDE + i;
-                fieldX[at] = .27f * (float) Math.sin(py * 4 + time * .31f)
-                        + .14f * (float) Math.cos(px * 3 - time * .23f) - dy * spin;
-                fieldY[at] = .22f * (float) Math.cos(px * 3.5f - time * .26f)
-                        + .12f * (float) Math.sin(py * 5 + time * .19f) + dx * spin;
+        advance(seconds, true);
+        float peak = Math.min(4, cycle * .32f), release = peak + Math.min(.9f, cycle * .22f);
+        float end = Math.min(cycle * .95f, release + Math.min(.95f, cycle * .17f));
+        for (int i = 0; i < count; i++) {
+            int at = i*6, target = i*4;
+            float x = state[at], y = state[at+1], vx = state[at+2], vy = state[at+3];
+            float seed = properties[at], capture = state[at+4], impact = state[at+5];
+            float local = phase - (properties[at+2]-.5f)*Math.min(.25f,cycle*.04f);
+            float likeness = FlowField.smooth(0,peak,local)*(1-FlowField.smooth(release,end,local));
+            float desired = properties[at+3] > .5f ? 0 : Math.min(.99f,likeness*1.0626f*(.9f+.1f*(float)Math.sin(time*2.7f+seed*9)));
+            capture += (desired-capture)*(1-(float)Math.exp(-dt*(desired<capture?7:2.8f)));
+            if (capture < .00001f) capture = 0;
+            float gx = Math.max(0,Math.min(63.9999f,(x+FlowField.EXTENT_X)/(2*FlowField.EXTENT_X)*64));
+            float gy = Math.max(0,Math.min(47.9999f,(y+FlowField.EXTENT_Y)/(2*FlowField.EXTENT_Y)*48));
+            int ix = (int)gx, iy = (int)gy, k = (iy*65+ix)*2;
+            float u = gx-ix, v = gy-iy;
+            float fx = sample(k,u,v), fy = sample(k+1,u,v);
+            float px = targets[target]+properties[at+4], py = targets[target+1]+properties[at+5];
+            float tx = px+.023f*(float)Math.sin(time*.29f)+.011f*(float)Math.sin(time*2.8f+seed*31+py*18);
+            float ty = py-.02f+.019f*(float)Math.cos(time*.23f)+.011f*(float)Math.cos(time*2.4f+seed*27+px*19);
+            float freedom = .28f+.72f*(1-capture)*(1-capture), pull = 30*capture*capture*capture;
+            float damping = 6.1f*capture, layer = .8f+(int)(seed*4)*.15f, response=1.8f+(seed%.25f)*4;
+            vx += ((fx*layer*motion-vx)*response*freedom+(tx-x)*pull-vx*damping)*dt;
+            vy += ((fy*layer*motion-vy)*response*freedom+(ty-y)*pull-vy*damping)*dt;
+            float velocity = (float)Math.hypot(vx,vy);
+            if (velocity>2.5f) { vx*=2.5f/velocity; vy*=2.5f/velocity; }
+            x+=vx*dt; y+=vy*dt; impact*=(float)Math.exp(-dt*5);
+            if (Math.abs(x)>FlowField.EXTENT_X) {
+                x=Math.copySign(FlowField.EXTENT_X,x); impact=Math.min(1,Math.abs(vx)*1.4f);
+                vx=-Math.copySign(Math.abs(vx)*.83f,x); vy+=(seed-.5f)*.18f;
             }
+            if (Math.abs(y)>FlowField.EXTENT_Y) {
+                y=Math.copySign(FlowField.EXTENT_Y,y); impact=Math.max(impact,Math.min(1,Math.abs(vy)*1.4f));
+                vy=-Math.copySign(Math.abs(vy)*.83f,y); vx+=(seed-.5f)*.18f;
+            }
+            state[at]=x; state[at+1]=y; state[at+2]=vx; state[at+3]=vy; state[at+4]=capture; state[at+5]=impact;
         }
     }
 
-    private static float interpolate(float[] values, int at, float fx, float fy) {
-        float a = values[at] + (values[at + 1] - values[at]) * fx;
-        float b = values[at + STRIDE] + (values[at + STRIDE + 1] - values[at + STRIDE]) * fx;
-        return a + (b - a) * fy;
+    private float sample(int k,float u,float v) {
+        float[] f=field.values;
+        return (f[k]*(1-u)+f[k+2]*u)*(1-v)+(f[k+130]*(1-u)+f[k+132]*u)*v;
     }
-
-    private static float smooth(float t) { return t * t * (3 - 2 * t); }
 }

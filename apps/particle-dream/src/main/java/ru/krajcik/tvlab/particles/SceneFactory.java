@@ -105,12 +105,14 @@ final class SceneFactory {
             if (weight > .06f && random.nextFloat() < weight) candidates.add(at);
         }
         if (candidates.isEmpty()) return null;
-        float[] result = new float[32000 * 2];
-        float scale = Math.min(2.9f / w, 1.55f / h);
-        for (int i = 0; i < result.length; i += 2) {
+        float[] result = new float[200000 * 4];
+        float scale = .96f / Math.max(w, h);
+        for (int i = 0; i < result.length; i += 4) {
             int at = candidates.get(random.nextInt(candidates.size()));
             result[i] = ((at % w) - w / 2f + random.nextFloat() - .5f) * scale;
-            result[i + 1] = (h / 2f - (at / w) + random.nextFloat() - .5f) * scale;
+            result[i + 1] = ((at / w) - h / 2f + random.nextFloat() - .5f) * scale;
+            result[i + 2] = image ? luminance(pixels[at]) : 1;
+            result[i + 3] = 1 - FlowField.smooth(.36f, .50f, result[i + 1]);
         }
         return result;
     }

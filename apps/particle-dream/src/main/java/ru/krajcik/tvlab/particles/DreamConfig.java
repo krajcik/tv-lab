@@ -16,9 +16,9 @@ final class DreamConfig {
         phrases = p.getString("phrases", DEFAULT_PHRASES);
         text = p.getBoolean("text", false);
         pictures = p.getBoolean("pictures", true);
-        int requested = p.getInt("count", 16000);
-        count = requested == 8000 || requested == 32000 ? requested : 16000;
-        cycleSeconds = p.getBoolean("slow", true) ? 32 : 24;
+        int requested = p.getInt("count", 200000);
+        count = requested == 50000 || requested == 100000 ? requested : 200000;
+        cycleSeconds = p.getBoolean("long_cycle", false) ? 32 : 18.75f;
     }
 
     static SharedPreferences preferences(Context context) {

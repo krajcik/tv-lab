@@ -104,18 +104,18 @@ public final class SettingsActivity extends Activity {
         updateImageStatus();
 
         label(content, "Движение", 22, Color.WHITE);
-        slow = checkbox(content, "Неспешные переходы · 32 секунды на сцену", config.cycleSeconds == 32);
+        slow = checkbox(content, "Длинная пауза между образами · 32 секунды", config.cycleSeconds == 32);
         label(content, "Количество частиц", 16, 0xFFB7C3CD);
         quality = new Spinner(this);
         quality.setId(R.id.quality);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                new String[] {"8 000 · экономно", "16 000 · обычно", "32 000 · плотно"});
+                new String[] {"50 000 · экономно", "100 000 · средне", "200 000 · как в оригинале"});
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         quality.setAdapter(adapter);
-        quality.setSelection(config.count == 8000 ? 0 : config.count == 32000 ? 2 : 1);
+        quality.setSelection(config.count == 50000 ? 0 : config.count == 100000 ? 1 : 2);
         quality.setContentDescription("Количество частиц");
         content.addView(quality, new LinearLayout.LayoutParams(-1, dp(56)));
-        label(content, "Без звука и подключения к интернету. Если движение прерывается, выберите 8 000 частиц.", 14, 0xFF91A1AE);
+        label(content, "Без звука и подключения к интернету. Если движение прерывается, выберите 50 000 частиц.", 14, 0xFF91A1AE);
         button(content, "Сохранить", () -> { save(); toast("Настройки сохранены"); });
         preview.requestFocus();
     }
@@ -133,7 +133,7 @@ public final class SettingsActivity extends Activity {
         }
         DreamConfig.preferences(this).edit().putString("phrases", cleaned.toString())
                 .putBoolean("text", text.isChecked()).putBoolean("pictures", pictures.isChecked())
-                .putBoolean("slow", slow.isChecked()).putInt("count", new int[] {8000, 16000, 32000}[quality.getSelectedItemPosition()])
+                .putBoolean("long_cycle", slow.isChecked()).putInt("count", new int[] {50000, 100000, 200000}[quality.getSelectedItemPosition()])
                 .apply();
     }
 

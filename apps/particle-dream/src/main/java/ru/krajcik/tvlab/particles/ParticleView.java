@@ -2,48 +2,24 @@ package ru.krajcik.tvlab.particles;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
+import android.os.Build;
+import android.view.Surface;
+import android.view.SurfaceHolder;
 
 final class ParticleView extends GLSurfaceView {
-    private final Handler handler = new Handler(Looper.getMainLooper());
-    private boolean running;
-    private final Runnable frame = new Runnable() {
-        @Override public void run() {
-            if (!running) return;
-            requestRender();
-            handler.postAtTime(this, SystemClock.uptimeMillis() + 33);
-        }
-    };
-
-    ParticleView(Context context) {
+    ParticleView(Context context, ParticleEngine engine) {
         super(context);
-        DreamConfig config = new DreamConfig(context);
-        ParticleEngine engine = new ParticleEngine(config.count, SceneFactory.create(context, config),
-                config.cycleSeconds, System.nanoTime());
-        setEGLContextClientVersion(2);
-        setPreserveEGLContextOnPause(false);
-        setRenderer(new ParticleRenderer(engine));
-        setRenderMode(RENDERMODE_WHEN_DIRTY);
+        setEGLContextClientVersion(3);
+        setPreserveEGLContextOnPause(true);
+        setRenderer(new ParticleRenderer(context,engine));
+        // EGL swaps are paced by the display. There is no Handler timer or 720p render target.
+        setRenderMode(RENDERMODE_CONTINUOUSLY);
+        getHolder().setFixedSize(3840,2160);
     }
 
-    @Override public void onResume() {
-        if (running) return;
-        super.onResume();
-        running = true;
-        handler.post(frame);
-    }
-
-    @Override public void onPause() {
-        running = false;
-        handler.removeCallbacks(frame);
-        super.onPause();
-    }
-
-    @Override protected void onDetachedFromWindow() {
-        running = false;
-        handler.removeCallbacks(frame);
-        super.onDetachedFromWindow();
+    @Override public void surfaceCreated(SurfaceHolder holder){
+        super.surfaceCreated(holder);
+        if(Build.VERSION.SDK_INT>=31)holder.getSurface().setFrameRate(60,Surface.FRAME_RATE_COMPATIBILITY_DEFAULT,Surface.CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS);
+        else if(Build.VERSION.SDK_INT>=30)holder.getSurface().setFrameRate(60,Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
     }
 }

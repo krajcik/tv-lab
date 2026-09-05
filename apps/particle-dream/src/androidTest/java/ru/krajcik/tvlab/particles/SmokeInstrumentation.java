@@ -64,7 +64,8 @@ public final class SmokeInstrumentation extends Instrumentation {
             require(output.isFile(), "A failed import must preserve the previous image");
             Files.deleteIfExists(output.toPath());
             require(SceneFactory.create(getTargetContext(), defaults).length == 3, "Removing custom image must restore animals");
-            result.putString("stream", "PASS: default animals, settings launch, EXIF rotation, original preserved, custom replacement, failed import recovery, default restoration\n");
+            String gpuResult=GpuParityTest.run(this,activity);
+            result.putString("stream", "PASS: default animals, settings launch, EXIF rotation, original preserved, custom replacement, failed import recovery, default restoration; "+gpuResult+"\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable error) {
             result.putString("stream", android.util.Log.getStackTraceString(error));
