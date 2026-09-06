@@ -37,7 +37,7 @@ public final class SettingsActivity extends Activity {
     private static final int PICK_IMAGE = 1;
     private final ExecutorService io = Executors.newSingleThreadExecutor();
     private EditText phrases;
-    private CheckBox text, pictures, slow, quotes;
+    private CheckBox text, pictures, slow, quotes, shuffle;
     private Spinner quality, font;
     private TextView imageStatus;
     private Button importButton, deleteButton;
@@ -72,8 +72,9 @@ public final class SettingsActivity extends Activity {
 
         label(content, "Что появляется из частиц", 22, Color.WHITE);
         DreamConfig config = new DreamConfig(this);
+        shuffle = checkbox(content, "Случайный порядок при каждом запуске", config.shuffle);
         quotes = checkbox(content, "Цитаты стоиков", config.quotes);
-        label(content, "Сенека, Марк Аврелий и Эпиктет. С подписью автора.", 14, 0xFF91A1AE);
+        label(content, "1000 цитат Сенеки, Марка Аврелия и Эпиктета. С подписью автора.", 14, 0xFF91A1AE);
         label(content, "Шрифт текста", 16, 0xFFB7C3CD);
         font = new Spinner(this);font.setId(R.id.font);
         ArrayAdapter<String> fonts = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
@@ -143,7 +144,7 @@ public final class SettingsActivity extends Activity {
             cleaned.append(value, 0, Math.min(value.length(), 100));
         }
         DreamConfig.preferences(this).edit().putString("phrases", cleaned.toString())
-                .putString("font", DreamConfig.FONTS[font.getSelectedItemPosition()]).putBoolean("quotes", quotes.isChecked()).putBoolean("text", text.isChecked()).putBoolean("pictures", pictures.isChecked())
+                .putBoolean("shuffle", shuffle.isChecked()).putString("font", DreamConfig.FONTS[font.getSelectedItemPosition()]).putBoolean("quotes", quotes.isChecked()).putBoolean("text", text.isChecked()).putBoolean("pictures", pictures.isChecked())
                 .putBoolean("long_cycle", slow.isChecked()).putInt("count", new int[] {50000, 100000, 200000}[quality.getSelectedItemPosition()])
                 .apply();
     }
@@ -216,7 +217,7 @@ public final class SettingsActivity extends Activity {
 
     private void updateImageStatus() {
         boolean exists = imageFile().isFile();
-        imageStatus.setText(exists ? "Своя картинка заменяет стандартный набор. Новая заменит её." : "12 образов: животные, природа и космос.");
+        imageStatus.setText(exists ? "Своя картинка заменяет стандартный набор. Новая заменит её." : "100 образов: животные, природа и космос.");
         deleteButton.setEnabled(exists && !importing);
     }
 

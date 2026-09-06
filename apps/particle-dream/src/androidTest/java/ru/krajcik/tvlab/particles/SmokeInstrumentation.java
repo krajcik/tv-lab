@@ -16,10 +16,16 @@ import java.util.Arrays;
 
 /** Run only on a disposable emulator; this resets its app preferences and imported test image. */
 public final class SmokeInstrumentation extends Instrumentation {
-    private boolean fontPreviews;
-    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments);fontPreviews=arguments!=null&&"true".equals(arguments.getString("fontPreviews"));start(); }
+    private boolean fontPreviews,imageInventory;
+    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments);fontPreviews=arguments!=null&&"true".equals(arguments.getString("fontPreviews"));imageInventory=arguments!=null&&"true".equals(arguments.getString("imageInventory"));start(); }
 
     @Override public void onStart() {
+        if(imageInventory){
+            Bundle result=new Bundle();
+            try{ImageInventory.verify(getTargetContext());result.putString("stream","PASS: all100 actual image entries decoded into distinct nonempty clouds\n");finish(Activity.RESULT_OK,result);}
+            catch(Exception|AssertionError error){result.putString("stream",android.util.Log.getStackTraceString(error));finish(Activity.RESULT_CANCELED,result);}
+            return;
+        }
         if(fontPreviews){
             Bundle result=new Bundle();
             try{FontPreviews.write(getTargetContext());result.putString("stream","PASS: three native Cyrillic font previews generated\n");finish(Activity.RESULT_OK,result);}
@@ -36,7 +42,7 @@ public final class SmokeInstrumentation extends Instrumentation {
             DreamConfig defaults = new DreamConfig(getTargetContext());
             require(!defaults.text && defaults.pictures && defaults.quotes, "Defaults must show the image and quote libraries");
             java.util.List<QuoteLibrary.Quote> quotes=QuoteLibrary.read(getTargetContext());
-            require(quotes.size()==100,"Curated library must contain 100 verified stoic quotations");
+            require(quotes.size()==1000,"Curated library must contain 1000 verified stoic quotations");
             android.graphics.Paint paint=new android.graphics.Paint();paint.setTextSize(48);
             for(QuoteLibrary.Quote quote:quotes){
                 require(java.util.Arrays.asList("Сенека","Марк Аврелий","Эпиктет").contains(quote.author)&&!quote.work.isEmpty()&&quote.source.startsWith("https://"),"Each quote needs attribution and a source");
@@ -55,7 +61,7 @@ public final class SmokeInstrumentation extends Instrumentation {
                 float[] cloud=recipe.load();ScenePlaylist.validate(cloud);
                 require(cloud.length>=1000,"Each asset must produce a nonempty cloud");unique.add(Arrays.hashCode(cloud));
             }
-            require(recipes.size()==uniqueCount&&unique.size()==uniqueCount,"All112 unique scene recipes must materialize correctly");
+            require(recipes.size()==uniqueCount&&unique.size()==uniqueCount,"All1100 unique scene recipes must materialize correctly");
             try(SceneCache cache=new SceneCache(catalogue)){
                 cache.prepareInitial();long deadline=System.nanoTime()+5_000_000_000L;
                 while(cache.peek(2)==null&&System.nanoTime()<deadline)Thread.sleep(5);
@@ -95,7 +101,7 @@ public final class SmokeInstrumentation extends Instrumentation {
             Files.deleteIfExists(output.toPath());
             require(uniqueRecipes(SceneFactory.playlist(getTargetContext(), defaults)) == uniqueCount, "Removing custom image must restore all standard scenes");
             String gpuResult=GpuParityTest.run(this,activity);
-            result.putString("stream", "PASS: default animals, settings launch, EXIF rotation, original preserved, custom replacement, failed import recovery, default restoration; 12 images, 100 attributed stoic quotes, wrapping, lazy bounded cache; "+gpuResult+"\n");
+            result.putString("stream", "PASS: default animals, settings launch, EXIF rotation, original preserved, custom replacement, failed import recovery, default restoration; 100 images, 1000 attributed stoic quotes, wrapping, lazy bounded cache; "+gpuResult+"\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable error) {
             result.putString("stream", android.util.Log.getStackTraceString(error));

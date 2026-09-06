@@ -8,7 +8,7 @@ final class DreamConfig {
     static final String IMAGE_FILE = "custom-image.png";
     static final String[] FONTS = {"serif", "sans-serif-light", "sans-serif-condensed"};
     final String phrases, font;
-    final boolean text, pictures, quotes;
+    final boolean text, pictures, quotes, shuffle;
     final int count;
     final float cycleSeconds;
 
@@ -19,6 +19,7 @@ final class DreamConfig {
         font = chosen.equals(FONTS[1]) || chosen.equals(FONTS[2]) ? chosen : FONTS[0];
         text = p.getBoolean("text", false);
         quotes = p.getBoolean("quotes", true);
+        shuffle = p.getBoolean("shuffle", true);
         pictures = p.getBoolean("pictures", true);
         int requested = p.getInt("count", 200000);
         count = requested == 50000 || requested == 100000 ? requested : 200000;

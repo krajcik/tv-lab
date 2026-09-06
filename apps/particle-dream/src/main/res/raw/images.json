@@ -1,0 +1,1302 @@
+[
+  {
+    "id": "pets-1",
+    "title": "Ретривер",
+    "category": "animals",
+    "resource": "pets",
+    "crop": [
+      0,
+      0,
+      0.36,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "nature-1",
+    "title": "Дуб",
+    "category": "nature",
+    "resource": "nature",
+    "crop": [
+      0,
+      0,
+      0.3333333333333333,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "space-1",
+    "title": "Сатурн",
+    "category": "space",
+    "resource": "space",
+    "crop": [
+      0,
+      0,
+      0.3333333333333333,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "pets-2",
+    "title": "Курильский бобтейл",
+    "category": "animals",
+    "resource": "pets",
+    "crop": [
+      0.36,
+      0,
+      0.655,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "nature-2",
+    "title": "Горный массив",
+    "category": "nature",
+    "resource": "nature",
+    "crop": [
+      0.3333333333333333,
+      0,
+      0.6666666666666666,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "space-2",
+    "title": "Спиральная галактика",
+    "category": "space",
+    "resource": "space",
+    "crop": [
+      0.3333333333333333,
+      0,
+      0.6666666666666666,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "pets-3",
+    "title": "Рэгдолл",
+    "category": "animals",
+    "resource": "pets",
+    "crop": [
+      0.655,
+      0,
+      1,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "nature-3",
+    "title": "Папоротник",
+    "category": "nature",
+    "resource": "nature",
+    "crop": [
+      0.6666666666666666,
+      0,
+      1,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "space-3",
+    "title": "Лунный серп",
+    "category": "space",
+    "resource": "space",
+    "crop": [
+      0.6666666666666666,
+      0,
+      1,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "pet_portraits-1",
+    "title": "Портрет ретривера",
+    "category": "animals",
+    "resource": "pet_portraits",
+    "crop": [
+      0,
+      0,
+      0.3333333333333333,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "library_05-4",
+    "title": "Коралл",
+    "category": "nature",
+    "resource": "library_05",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-1",
+    "title": "Земля",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "pet_portraits-2",
+    "title": "Портрет бобтейла",
+    "category": "animals",
+    "resource": "pet_portraits",
+    "crop": [
+      0.3333333333333333,
+      0,
+      0.6666666666666666,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "library_05-5",
+    "title": "Морская раковина",
+    "category": "nature",
+    "resource": "library_05",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.666666667,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-2",
+    "title": "Полная Луна",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0.333333333,
+      0,
+      0.666666667,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "pet_portraits-3",
+    "title": "Портрет рэгдолла",
+    "category": "animals",
+    "resource": "pet_portraits",
+    "crop": [
+      0.6666666666666666,
+      0,
+      1,
+      1
+    ],
+    "sample": 2
+  },
+  {
+    "id": "library_05-6",
+    "title": "Наутилус",
+    "category": "nature",
+    "resource": "library_05",
+    "crop": [
+      0.666666667,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-3",
+    "title": "Марс",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0.666666667,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-1",
+    "title": "Отдыхающий ретривер",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_05-7",
+    "title": "Лотос",
+    "category": "nature",
+    "resource": "library_05",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-4",
+    "title": "Юпитер",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-2",
+    "title": "Бобтейл с коротким хвостом",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0.333333333,
+      0,
+      0.666666667,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-1",
+    "title": "Сосна",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-5",
+    "title": "Уран",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.666666667,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-3",
+    "title": "Спящий рэгдолл",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0.666666667,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-2",
+    "title": "Берёза",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0.333333333,
+      0,
+      0.666666667,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-6",
+    "title": "Нептун",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0.666666667,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-4",
+    "title": "Лиса",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-3",
+    "title": "Клён",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0.666666667,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-7",
+    "title": "Комета",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-5",
+    "title": "Волк",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.666666667,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-4",
+    "title": "Бамбук",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-8",
+    "title": "Астероид",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0.333333333,
+      0.666666667,
+      0.666666667,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-6",
+    "title": "Малая панда",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0.666666667,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-5",
+    "title": "Пальма",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.666666667,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_08-9",
+    "title": "Солнечная корона",
+    "category": "space",
+    "resource": "library_08",
+    "crop": [
+      0.666666667,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-7",
+    "title": "Енот",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-6",
+    "title": "Ива",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0.666666667,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-1",
+    "title": "Галактика анфас",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-8",
+    "title": "Заяц",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0.333333333,
+      0.666666667,
+      0.666666667,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-7",
+    "title": "Лист монстеры",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-2",
+    "title": "Галактика с ребра",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0.333333333,
+      0,
+      0.666666667,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_01-9",
+    "title": "Белка",
+    "category": "animals",
+    "resource": "library_01",
+    "crop": [
+      0.666666667,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-8",
+    "title": "Ветвь гинкго",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0.333333333,
+      0.666666667,
+      0.666666667,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-3",
+    "title": "Галактика с перемычкой",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0.666666667,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-1",
+    "title": "Олень",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0,
+      0,
+      0.346889952,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_06-9",
+    "title": "Орхидея",
+    "category": "nature",
+    "resource": "library_06",
+    "crop": [
+      0.666666667,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-4",
+    "title": "Слияние галактик",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-2",
+    "title": "Лань",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0.346889952,
+      0,
+      0.657097289,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-1",
+    "title": "Две снежные вершины",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-5",
+    "title": "Планетарная туманность",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.666666667,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-3",
+    "title": "Лось",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0.657097289,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-2",
+    "title": "Водопад",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0.333333333,
+      0,
+      0.666666667,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-6",
+    "title": "Газовая туманность",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0.666666667,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-4",
+    "title": "Лошадь",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0,
+      0.333333333,
+      0.346889952,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-3",
+    "title": "Вулкан",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0.666666667,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-7",
+    "title": "Туманность Розетка",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-5",
+    "title": "Бизон",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0.346889952,
+      0.333333333,
+      0.657097289,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-4",
+    "title": "Песчаные дюны",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-8",
+    "title": "Чёрная дыра",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0.333333333,
+      0.666666667,
+      0.666666667,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-6",
+    "title": "Бурый медведь",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0.657097289,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-5",
+    "title": "Бонсай",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.666666667,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_09-9",
+    "title": "Остаток сверхновой",
+    "category": "space",
+    "resource": "library_09",
+    "crop": [
+      0.666666667,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-7",
+    "title": "Белый медведь",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0,
+      0.666666667,
+      0.346889952,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-6",
+    "title": "Гроза",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0.666666667,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_10-1",
+    "title": "Шлем космонавта",
+    "category": "space",
+    "resource": "library_10",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-8",
+    "title": "Рысь",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0.346889952,
+      0.666666667,
+      0.657097289,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-7",
+    "title": "Кристаллы кварца",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_10-2",
+    "title": "Космонавт",
+    "category": "space",
+    "resource": "library_10",
+    "crop": [
+      0.333333333,
+      0,
+      0.666666667,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_02-9",
+    "title": "Снежный барс",
+    "category": "animals",
+    "resource": "library_02",
+    "crop": [
+      0.657097289,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-8",
+    "title": "Сосновая шишка",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0.333333333,
+      0.666666667,
+      0.666666667,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_10-3",
+    "title": "Космическая станция",
+    "category": "space",
+    "resource": "library_10",
+    "crop": [
+      0.666666667,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-1",
+    "title": "Лев",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_07-9",
+    "title": "Иней на листе",
+    "category": "nature",
+    "resource": "library_07",
+    "crop": [
+      0.666666667,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_10-4",
+    "title": "Межпланетный зонд",
+    "category": "space",
+    "resource": "library_10",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-2",
+    "title": "Тигр",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0.333333333,
+      0,
+      0.661881978,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_10-5",
+    "title": "Ракета",
+    "category": "space",
+    "resource": "library_10",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.666666667,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-3",
+    "title": "Леопард",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0.661881978,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_10-6",
+    "title": "Радиотелескоп",
+    "category": "space",
+    "resource": "library_10",
+    "crop": [
+      0.666666667,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-4",
+    "title": "Гепард",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_10-7",
+    "title": "Лунный модуль",
+    "category": "space",
+    "resource": "library_10",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-5",
+    "title": "Пума",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.661881978,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-6",
+    "title": "Ягуар",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0.661881978,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-7",
+    "title": "Выдра",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-8",
+    "title": "Ёж",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0.333333333,
+      0.666666667,
+      0.661881978,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_03-9",
+    "title": "Коала",
+    "category": "animals",
+    "resource": "library_03",
+    "crop": [
+      0.661881978,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-1",
+    "title": "Сипуха",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-2",
+    "title": "Орёл",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0.333333333,
+      0,
+      0.666666667,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-3",
+    "title": "Колибри",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0.666666667,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-4",
+    "title": "Зимородок",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0,
+      0.333333333,
+      0.333333333,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-5",
+    "title": "Журавль",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0.333333333,
+      0.333333333,
+      0.666666667,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-6",
+    "title": "Лебедь",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0.666666667,
+      0.333333333,
+      1,
+      0.666666667
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-7",
+    "title": "Цапля",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0,
+      0.666666667,
+      0.333333333,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-8",
+    "title": "Ворон",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0.333333333,
+      0.666666667,
+      0.666666667,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_04-9",
+    "title": "Павлин",
+    "category": "animals",
+    "resource": "library_04",
+    "crop": [
+      0.666666667,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_05-1",
+    "title": "Дельфин",
+    "category": "animals",
+    "resource": "library_05",
+    "crop": [
+      0,
+      0,
+      0.333333333,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_05-2",
+    "title": "Горбатый кит",
+    "category": "animals",
+    "resource": "library_05",
+    "crop": [
+      0.333333333,
+      0,
+      0.666666667,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_05-3",
+    "title": "Морская черепаха",
+    "category": "animals",
+    "resource": "library_05",
+    "crop": [
+      0.666666667,
+      0,
+      1,
+      0.333333333
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_05-8",
+    "title": "Стрекоза",
+    "category": "animals",
+    "resource": "library_05",
+    "crop": [
+      0.333333333,
+      0.666666667,
+      0.666666667,
+      1
+    ],
+    "sample": 1
+  },
+  {
+    "id": "library_05-9",
+    "title": "Бабочка",
+    "category": "animals",
+    "resource": "library_05",
+    "crop": [
+      0.666666667,
+      0.666666667,
+      1,
+      1
+    ],
+    "sample": 1
+  }
+]

@@ -14,7 +14,7 @@ import java.util.Random;
 
 final class SceneFactory {
     private static final int WIDTH = 640, HEIGHT = 360;
-    static final int BUILTIN_IMAGES = 12;
+    static final int BUILTIN_IMAGES = 100;
     static final int TARGET_POINTS = 65536;
     static final int TEXT_TARGET_POINTS = 16384;
 
@@ -39,6 +39,7 @@ final class SceneFactory {
             else pictures.addAll(builtins(context));
         }
         if (pictures.isEmpty() && words.isEmpty()) pictures.addAll(builtins(context));
+        if(config.shuffle){java.util.Collections.shuffle(pictures);java.util.Collections.shuffle(words);}
         List<SceneSource> order = new ArrayList<>();
         List<Boolean> kinds = new ArrayList<>();
         for (int i=0;i<Math.max(pictures.size(),words.size());i++) {
@@ -117,22 +118,22 @@ final class SceneFactory {
     }
 
     private static List<SceneSource> builtins(Context context) {
-        int[] resources={R.drawable.pets,R.drawable.nature,R.drawable.space,R.drawable.pet_portraits};
-        float[][] edges={{0,.36f,.655f,1},{0,1f/3,2f/3,1},{0,1f/3,2f/3,1},{0,1f/3,2f/3,1}};
         List<SceneSource> result=new ArrayList<>();
-        for(int picture=0;picture<3;picture++)for(int group=0;group<resources.length;group++){
-            int resource=resources[group];float left=edges[group][picture],right=edges[group][picture+1];
-            result.add(()->atlas(context,resource,left,right));
-        }
+        for(ImageLibrary.Entry entry:ImageLibrary.read(context))result.add(()->image(context,entry));
         return result;
     }
+    static float[] image(Context context,ImageLibrary.Entry entry){return atlas(context,entry.resource,entry.left,entry.top,entry.right,entry.bottom,entry.sample);}
     private static float[] atlas(Context context,int resource,float start,float end) {
-        BitmapFactory.Options options=new BitmapFactory.Options();options.inSampleSize=2;
+        return atlas(context,resource,start,0,end,1,2);
+    }
+    private static float[] atlas(Context context,int resource,float startX,float startY,float endX,float endY,int sample) {
+        BitmapFactory.Options options=new BitmapFactory.Options();options.inSampleSize=sample;
         Bitmap atlas=BitmapFactory.decodeResource(context.getResources(),resource,options);
         if(atlas==null)throw new IllegalStateException("Missing built-in image atlas");
         try {
-            int left=Math.round(atlas.getWidth()*start),right=Math.round(atlas.getWidth()*end);
-            Bitmap image=Bitmap.createBitmap(atlas,left,0,right-left,atlas.getHeight());
+            int left=Math.round(atlas.getWidth()*startX),right=Math.round(atlas.getWidth()*endX);
+            int top=Math.round(atlas.getHeight()*startY),bottom=Math.round(atlas.getHeight()*endY);
+            Bitmap image=Bitmap.createBitmap(atlas,left,top,right-left,bottom-top);
             try {return sample(image,true);} finally {image.recycle();}
         } finally {atlas.recycle();}
     }
