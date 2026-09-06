@@ -20,6 +20,16 @@ final class SceneFactory {
     static final int TEXT_TARGET_POINTS = 65536;
 
     static ScenePlaylist playlist(Context context, DreamConfig config) {
+        if(config.procedural){
+            List<Integer> selected=new ArrayList<>();
+            for(int mode=1;mode<=ParticleModes.COUNT;mode++)if((config.modes&(1<<(mode-1)))!=0)selected.add(mode);
+            if(selected.isEmpty())selected.add(1);
+            if(config.shuffle)java.util.Collections.shuffle(selected);
+            if(config.modeSeconds==0)selected=selected.subList(0,1);
+            int[] modes=new int[selected.size()];SceneSource[] sources=new SceneSource[modes.length];
+            for(int i=0;i<modes.length;i++){modes[i]=selected.get(i);sources[i]=modeSource(modes[i]);}
+            return new ScenePlaylist(sources,new boolean[modes.length],modes,config.modeSeconds);
+        }
         List<SceneSource> words = new ArrayList<>();
         if (config.quotes) for (QuoteLibrary.Quote quote : QuoteLibrary.read(context))
             words.add(() -> text(quote.text, quote.author, config.font));
@@ -39,17 +49,20 @@ final class SceneFactory {
             if (file.isFile()) pictures.add(() -> customImage(context, file));
             else pictures.addAll(builtins(context));
         }
-        if (pictures.isEmpty() && words.isEmpty()) pictures.addAll(builtins(context));
+        if(pictures.isEmpty()&&words.isEmpty())pictures.addAll(builtins(context));
         if(config.shuffle){java.util.Collections.shuffle(pictures);java.util.Collections.shuffle(words);}
-        List<SceneSource> order = new ArrayList<>();
-        List<Boolean> kinds = new ArrayList<>();
-        for (int i=0;i<Math.max(pictures.size(),words.size());i++) {
-            if (!pictures.isEmpty()) { order.add(pictures.get(i%pictures.size())); kinds.add(false); }
-            if (!words.isEmpty()) { order.add(words.get(i%words.size())); kinds.add(true); }
+        List<SceneSource> order=new ArrayList<>();List<Boolean> kinds=new ArrayList<>();
+        for(int i=0;i<Math.max(pictures.size(),words.size());i++){
+            if(!pictures.isEmpty()){order.add(pictures.get(i%pictures.size()));kinds.add(false);}
+            if(!words.isEmpty()){order.add(words.get(i%words.size()));kinds.add(true);}
         }
-        boolean[] flags = new boolean[kinds.size()];
-        for(int i=0;i<flags.length;i++)flags[i]=kinds.get(i);
+        boolean[] flags=new boolean[kinds.size()];for(int i=0;i<flags.length;i++)flags[i]=kinds.get(i);
         return new ScenePlaylist(order.toArray(new SceneSource[0]),flags);
+    }
+    private static SceneSource modeSource(int mode){return ()->new float[]{0,0,mode/(float)ParticleModes.COUNT,0};}
+    static ScenePlaylist modePlaylist(int mode){
+        ParticleModes.validate(mode);if(mode==0)throw new IllegalArgumentException("Choose a procedural mode");
+        return new ScenePlaylist(new SceneSource[]{modeSource(mode)},new boolean[]{false},new int[]{mode},0);
     }
 
     private static float[] customImage(Context context, File file) {

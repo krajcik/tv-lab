@@ -14,7 +14,8 @@ public final class PreviewActivity extends Activity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         DisplaySetup.request4k60(getWindow());
-        session = new ParticleSession(this);
+        int mode=getIntent().getIntExtra("mode",0);
+        session = new ParticleSession(this,mode>=1&&mode<=ParticleModes.COUNT?mode:0);
         setContentView(session.content);
     }
 

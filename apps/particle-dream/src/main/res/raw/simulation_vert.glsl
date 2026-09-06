@@ -9,6 +9,8 @@ uniform sampler2D uField;
 uniform sampler2D uMean;
 uniform vec4 uClock; // dt, time, phase, motion
 uniform float uCycle;
+uniform vec4 uMode; // ID, local time, reserved, fade envelope
+// MODE_FUNCTIONS
 uniform vec4 uFormation; // build, release start, release end, text flag
 out vec4 nextMotion;
 out vec2 nextCaptureImpact;
@@ -18,6 +20,18 @@ void main(){
     float dt=uClock.x,t=uClock.y,phase=uClock.z,motion=uClock.w;
     vec2 p=aMotion.xy,velocity=aMotion.zw;
     float seed=aProperties.x,capture=aCaptureImpact.x,impact=aCaptureImpact.y;
+    if(uMode.x>.5){
+        vec2 grid=clamp((p+extent)/(2.*extent)*vec2(64.,48.),vec2(0.),vec2(63.9999,47.9999));
+        ivec2 cell=ivec2(floor(grid));vec2 fraction=fract(grid);
+        vec2 field=mix(mix(texelFetch(uField,cell,0).rg,texelFetch(uField,cell+ivec2(1,0),0).rg,fraction.x),mix(texelFetch(uField,cell+ivec2(0,1),0).rg,texelFetch(uField,cell+ivec2(1,1),0).rg,fraction.x),fraction.y)-texelFetch(uMean,ivec2(0),0).rg;
+        vec2 force=modeForce(int(uMode.x+.5),p,velocity,vec2(seed,aProperties.z),field,uMode.y,extent);
+        velocity+=mix((field-velocity)*1.8,force,uMode.w)*dt;
+        float speed=length(velocity);if(speed>2.5)velocity*=2.5/speed;
+        p+=velocity*dt;impact*=exp(-dt*5.);
+        if(abs(p.x)>extent.x){p.x=sign(p.x)*extent.x;impact=min(1.,abs(velocity.x)*1.4);velocity.x=-sign(p.x)*abs(velocity.x)*.83;velocity.y+=(seed-.5)*.18;}
+        if(abs(p.y)>extent.y){p.y=sign(p.y)*extent.y;impact=max(impact,min(1.,abs(velocity.y)*1.4));velocity.y=-sign(p.y)*abs(velocity.y)*.83;velocity.x+=(seed-.5)*.18;}
+        nextMotion=vec4(p,velocity);nextCaptureImpact=vec2(0.,impact);gl_Position=vec4(0.);vAlpha=0.;return;
+    }
     float peak=uFormation.x,release=uFormation.y,end=uFormation.z;
     bool words=uFormation.w>.5;
     float local=phase-(aProperties.z-.5)*min(.25,uCycle*.04);

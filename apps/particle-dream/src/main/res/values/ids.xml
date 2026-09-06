@@ -2,4 +2,7 @@
     <item name="phrases" type="id" />
     <item name="quality" type="id" />
     <item name="font" type="id" />
+    <item name="preview_scene" type="id" />
+    <item name="saver_kind" type="id" />
+    <item name="mode_duration" type="id" />
 </resources>

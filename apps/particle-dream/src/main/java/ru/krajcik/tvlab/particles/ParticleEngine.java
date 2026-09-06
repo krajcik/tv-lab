@@ -26,7 +26,7 @@ public final class ParticleEngine {
         if (count <= 0 || playlist.size() == 0 || !Float.isFinite(cycleSeconds) || cycleSeconds < 8)
             throw new IllegalArgumentException("Invalid simulation configuration");
         if(cache==null&&playlist.eagerTargets==null)throw new IllegalArgumentException("Lazy scenes require a prepared cache");
-        this.count=count;this.playlist=playlist;this.cache=cache;timeline=new SceneTimeline(playlist.text,cycleSeconds);
+        this.count=count;this.playlist=playlist;this.cache=cache;timeline=new SceneTimeline(playlist.text,playlist.modes,cycleSeconds,playlist.modeSeconds);
         state = new float[count * STATE_STRIDE];
         properties = new float[count * PROPERTY_STRIDE];
         targets = new float[count * TARGET_STRIDE];
@@ -51,6 +51,8 @@ public final class ParticleEngine {
         timeline.restartAt(initial);
     }
 
+    int mode(){return timeline.modes[scene];}
+    float modeBlend(){return mode()>0?ParticleModes.blend(phase,timeline.duration):0;}
     public int sceneIndex() { return scene; }
     float cycleSeconds() { return timeline.duration; }
 
@@ -100,6 +102,7 @@ public final class ParticleEngine {
     public void step(float seconds) {
         if (!Float.isFinite(seconds) || seconds <= 0) return;
         advance(seconds, true);
+        if(mode()>0)throw new UnsupportedOperationException("Procedural modes run on the GPU; use GPU invariant tests");
         float peak=timeline.build,release=timeline.releaseStart,end=timeline.releaseEnd;
         boolean words=timeline.text[scene];
         for (int i = 0; i < count; i++) {

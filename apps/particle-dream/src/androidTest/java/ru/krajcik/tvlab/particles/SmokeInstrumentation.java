@@ -16,10 +16,17 @@ import java.util.Arrays;
 
 /** Run only on a disposable emulator; this resets its app preferences and imported test image. */
 public final class SmokeInstrumentation extends Instrumentation {
-    private boolean fontPreviews,imageInventory,clarityPreviews;
-    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments);clarityPreviews=arguments!=null&&"true".equals(arguments.getString("clarityPreviews"));fontPreviews=arguments!=null&&"true".equals(arguments.getString("fontPreviews"));imageInventory=arguments!=null&&"true".equals(arguments.getString("imageInventory"));start(); }
+    private boolean fontPreviews,imageInventory,clarityPreviews,modePreviews;
+    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments);modePreviews=arguments!=null&&"true".equals(arguments.getString("modePreviews"));clarityPreviews=arguments!=null&&"true".equals(arguments.getString("clarityPreviews"));fontPreviews=arguments!=null&&"true".equals(arguments.getString("fontPreviews"));imageInventory=arguments!=null&&"true".equals(arguments.getString("imageInventory"));start(); }
 
     @Override public void onStart() {
+        if(modePreviews){
+            Bundle result=new Bundle();Activity preview=null;
+            try{preview=startActivitySync(new Intent(getTargetContext(),SettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));result.putString("stream",GpuModeTest.run(this,preview));finish(Activity.RESULT_OK,result);}
+            catch(Throwable error){result.putString("stream",android.util.Log.getStackTraceString(error));finish(Activity.RESULT_CANCELED,result);}
+            finally{if(preview!=null){Activity current=preview;runOnMainSync(current::finish);}}
+            return;
+        }
         if(clarityPreviews){
             Bundle result=new Bundle();Activity preview=null;
             try{preview=startActivitySync(new Intent(getTargetContext(),SettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));result.putString("stream","PASS: clarity GPU captures\n"+ClarityPreviews.write(this,preview));finish(Activity.RESULT_OK,result);}
@@ -46,6 +53,14 @@ public final class SmokeInstrumentation extends Instrumentation {
         try {
             DreamConfig.preferences(getTargetContext()).edit().clear().commit();
             Files.deleteIfExists(output.toPath());
+            DreamConfig live=new DreamConfig(getTargetContext());
+            require(live.procedural&&live.modes==255&&live.modeSeconds==3600,"Meditation defaults: eight modes, one hour, no gallery");
+            ScenePlaylist liveScenes=SceneFactory.playlist(getTargetContext(),live);
+            require(liveScenes.size()==8,"Only eight procedural scenes in meditation");
+            for(int id:liveScenes.modes)require(id>=1&&id<=8,"No gallery scenes in meditation");
+            DreamConfig.preferences(getTargetContext()).edit().putInt("mode_seconds",0).commit();
+            require(SceneFactory.playlist(getTargetContext(),new DreamConfig(getTargetContext())).size()==1,"Endless mode selects exactly one scene");
+            DreamConfig.preferences(getTargetContext()).edit().putBoolean("procedural",false).putInt("mode_seconds",3600).commit();
             DreamConfig defaults = new DreamConfig(getTargetContext());
             require(!defaults.text && defaults.pictures && defaults.quotes, "Defaults must show the image and quote libraries");
             java.util.List<QuoteLibrary.Quote> quotes=QuoteLibrary.read(getTargetContext());

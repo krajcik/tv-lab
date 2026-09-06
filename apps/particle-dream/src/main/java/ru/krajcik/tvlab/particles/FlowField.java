@@ -8,7 +8,9 @@ final class FlowField {
     final float[] values = new float[WIDTH * HEIGHT * 2];
     final float[] centers = new float[32], shapes = new float[32], seeds = new float[32];
     private final Vortex[] vortices = new Vortex[8];
-    private int generation;
+    private int generation, wallEvent;
+    final float[] walls=new float[16];
+    private void hitWall(float x,float y,float time,float strength){int at=(wallEvent++%4)*4;walls[at]=x;walls[at+1]=y;walls[at+2]=time;walls[at+3]=strength;}
 
     private static final class Vortex {
         float x, y, vx, vy, radius, spin, life, age, shock, cooldown, seed;
@@ -58,10 +60,12 @@ final class FlowField {
             if (Math.abs(v.x) > bx) {
                 v.x = Math.copySign(bx, v.x); v.vx = -Math.copySign(Math.abs(v.vx) * .95f, v.x);
                 v.shock = Math.max(v.shock, .45f);
+                hitWall(Math.copySign(EXTENT_X,v.x),v.y,time,.55f);
             }
             if (Math.abs(v.y) > by) {
                 v.y = Math.copySign(by, v.y); v.vy = -Math.copySign(Math.abs(v.vy) * .95f, v.y);
                 v.shock = Math.max(v.shock, .45f);
+                hitWall(v.x,Math.copySign(EXTENT_Y,v.y),time,.55f);
             }
         }
         for (int i = 0; i < vortices.length; i++) for (int j = i + 1; j < vortices.length; j++) {

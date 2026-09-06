@@ -8,12 +8,15 @@ final class DreamConfig {
     static final String IMAGE_FILE = "custom-image.png";
     static final String[] FONTS = {"serif", "sans-serif-light", "sans-serif-condensed"};
     final String phrases, font;
-    final boolean text, pictures, quotes, shuffle;
-    final int count;
+    final boolean text, pictures, quotes, shuffle, procedural;
+    final int count, modes, modeSeconds;
     final float cycleSeconds;
 
     DreamConfig(Context context) {
         SharedPreferences p = preferences(context);
+        procedural=p.getBoolean("procedural",true);
+        modeSeconds=ParticleModes.validDuration(p.getInt("mode_seconds",3600));
+        modes=p.getInt("modes",ParticleModes.ALL)&ParticleModes.ALL;
         phrases = p.getString("phrases", DEFAULT_PHRASES);
         String chosen = p.getString("font", "serif");
         font = chosen.equals(FONTS[1]) || chosen.equals(FONTS[2]) ? chosen : FONTS[0];

@@ -20,12 +20,13 @@ final class ParticleSession {
     private volatile boolean closed;
     private volatile SceneCache cache;
 
-    ParticleSession(Context context){
+    ParticleSession(Context context){this(context,0);}
+    ParticleSession(Context context,int previewMode){
         this.context=context;content=new FrameLayout(context);content.setBackgroundColor(Color.BLACK);
         worker.execute(()->{
             try {
                 DreamConfig config=new DreamConfig(context);
-                ScenePlaylist scenes=SceneFactory.playlist(context.getApplicationContext(),config);
+                ScenePlaylist scenes=previewMode>0?SceneFactory.modePlaylist(previewMode):SceneFactory.playlist(context.getApplicationContext(),config);
                 if(closed)return;
                 SceneCache prepared=new SceneCache(scenes);cache=prepared;
                 if(closed){prepared.close();return;}
