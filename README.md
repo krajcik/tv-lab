@@ -112,3 +112,8 @@ tools/                Локальные команды сборки и пров
 
 Gradle Wrapper распространяется с сохранением его
 [лицензии](docs/licenses/Gradle-LICENSE.txt) и [NOTICE](docs/licenses/Gradle-NOTICE.txt).
+
+## Версия для Mac
+
+Нативная заставка на Swift / Metal с общим каталогом 100 изображений и 1000 цитат.
+[Сборка, установка и проверка macOS-версии](docs/macos.md).
