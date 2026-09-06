@@ -1,0 +1,51 @@
+#EXTM3U
+# TV Lab: sports IPTV snapshot, checked 2026-09-07 Europe/Moscow.
+# Availability check: master playlist and first media segment returned HTTP 200.
+# Language is inferred from channel/region unless marked RU?.
+
+#EXTINF:-1 tvg-id="FloRacing.24x7" group-title="Спорт | Racing",FloRacing 24/7 — English
+https://amg02278-amg02278c1-flosports-worldwide-7592.playouts.now.amagi.tv/playlist.m3u8
+#EXTINF:-1 tvg-id="SkyRacing1" group-title="Спорт | Racing",Sky Racing 1 — English
+https://636ffd31f0e12.streamlock.net/RacingStream1/RacingStream1/playlist.m3u8
+#EXTINF:-1 tvg-id="SkyRacing2" group-title="Спорт | Racing",Sky Racing 2 — English
+https://636ffd31f0e12.streamlock.net/RacingStream2/RacingStream2/playlist.m3u8
+
+#EXTINF:-1 tvg-id="TVSBoxing" group-title="Спорт | Boxing / MMA",TVS Boxing — English
+https://rpn.bozztv.com/gusa/gusa-tvsboxing/index.m3u8
+#EXTINF:-1 tvg-id="FightBox" group-title="Спорт | Boxing / MMA",FightBox — English
+https://webtvstream.bhtelecom.ba/fightbox.m3u8
+#EXTINF:-1 tvg-id="FightBoxHD" group-title="Спорт | Boxing / MMA",FightBox HD — English
+https://nosignal1.antenaplay.ro/hls/fightbox-hd/index.m3u8
+#EXTINF:-1 tvg-id="PersianaFight" group-title="Спорт | Boxing / MMA",Persiana Fight — Persian / English unknown
+https://fighthls.persiana.live/hls/stream.m3u8
+#EXTINF:-1 tvg-id="SwerveCombat" group-title="Спорт | Boxing / MMA",Swerve Combat — English
+https://linear-253.frequency.stream/mt/roku/253/hls/master/playlist.m3u8
+
+#EXTINF:-1 tvg-id="NHLNetwork" group-title="Спорт | Хоккей",NHL Network — English
+https://nhl-firetv.amagi.tv/playlist.m3u8
+#EXTINF:-1 tvg-id="FloHockey.24x7" group-title="Спорт | Хоккей",FloHockey 24/7 — English
+https://amg02278-amg02278c2-flosports-worldwide-9916.playouts.now.amagi.tv/playlist.m3u8
+#EXTINF:-1 tvg-id="KHL" group-title="Спорт | Хоккей | RU?",KHL — Russian? unofficial
+http://stream.mcquack.net/166/index.m3u8
+#EXTINF:-1 tvg-id="KHL.Uplink" group-title="Спорт | Хоккей | RU?",KHL Uplink — Russian? unofficial
+https://fs.uplink.kz/telekanal_khl/mono.m3u8?token=onlinetv
+
+#EXTINF:-1 tvg-id="NBATV" group-title="Спорт | Баскетбол",NBA TV — English
+https://cdn1.ayitistream.com/NBATV/index.m3u8
+
+#EXTINF:-1 tvg-id="FIFAPlus.US" group-title="Спорт | Футбол",FIFA+ US — English
+https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8
+#EXTINF:-1 tvg-id="RealMadridTV.es" group-title="Спорт | Футбол",Real Madrid TV — Spanish
+https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8
+#EXTINF:-1 tvg-id="RealMadridTV.en" group-title="Спорт | Футбол",Real Madrid TV — English
+https://rmtv.akamaized.net/hls/live/2043154/rmtv-en-web/master.m3u8
+#EXTINF:-1 tvg-id="RealMadridTV.en.alt" group-title="Спорт | Футбол",Real Madrid TV — English alternate
+http://88.212.15.19/live/real_madrid_tv/index.m3u8
+#EXTINF:-1 tvg-id="SetantaEurasia" group-title="Спорт | Футбол | RU?",Setanta Sports Eurasia — Russian? unofficial
+http://stream.mcquack.net/234/index.m3u8
+#EXTINF:-1 tvg-id="FutbolTV.uz" group-title="Спорт | Футбол",Futbol TV — Uzbek / Russian unknown
+http://stream3.cinerama.uz/1010/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-id="Sportivnyy" group-title="Спорт | Общий | RU?",Sportivnyy — Russian?
+https://live-3.otcnet.ru/sportivny/index.m3u8
+#EXTINF:-1 tvg-id="AstrakhanRuSport" group-title="Спорт | Общий | RU?",Астрахань.Ru Sport — Russian?
+https://streaming.astrakhan.ru/astrakhanrusporthd/playlist.m3u8
