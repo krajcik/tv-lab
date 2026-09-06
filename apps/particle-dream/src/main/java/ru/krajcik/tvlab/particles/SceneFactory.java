@@ -14,9 +14,10 @@ import java.util.Random;
 
 final class SceneFactory {
     private static final int WIDTH = 640, HEIGHT = 360;
+    private static final int TEXT_WIDTH = 1280, TEXT_HEIGHT = 720;
     static final int BUILTIN_IMAGES = 100;
     static final int TARGET_POINTS = 65536;
-    static final int TEXT_TARGET_POINTS = 16384;
+    static final int TEXT_TARGET_POINTS = 65536;
 
     static ScenePlaylist playlist(Context context, DreamConfig config) {
         List<SceneSource> words = new ArrayList<>();
@@ -72,26 +73,26 @@ final class SceneFactory {
     }
 
     static Bitmap renderText(String value, String author, String font) {
-        Bitmap bitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(TEXT_WIDTH, TEXT_HEIGHT, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
         paint.setTypeface(Typeface.create(font, Typeface.NORMAL));
-        paint.setTextSize(48);
-        List<String> lines = wrap(value, paint, WIDTH - 64);
-        while (lines.size() > 3 && paint.getTextSize() > 22) {
-            paint.setTextSize(paint.getTextSize() - 2);
-            lines = wrap(value, paint, WIDTH - 64);
+        paint.setTextSize(96);
+        List<String> lines = wrap(value, paint, TEXT_WIDTH - 128);
+        while (lines.size() > 3 && paint.getTextSize() > 44) {
+            paint.setTextSize(paint.getTextSize() - 4);
+            lines = wrap(value, paint, TEXT_WIDTH - 128);
         }
         paint.setTextAlign(Paint.Align.CENTER);
         float spacing = paint.getFontSpacing() * 1.1f;
-        float total = spacing * lines.size() + (author == null ? 0 : 50);
-        float baseline = (HEIGHT - total) / 2 - paint.ascent();
-        for (String line : lines) { canvas.drawText(line, WIDTH / 2f, baseline, paint); baseline += spacing; }
+        float total = spacing * lines.size() + (author == null ? 0 : 100);
+        float baseline = (TEXT_HEIGHT - total) / 2 - paint.ascent();
+        for (String line : lines) { canvas.drawText(line, TEXT_WIDTH / 2f, baseline, paint); baseline += spacing; }
         if (author != null) {
             paint.setTypeface(Typeface.create("serif", Typeface.ITALIC));
-            paint.setTextSize(24);
-            canvas.drawText("— " + author, WIDTH / 2f, baseline + 18, paint);
+            paint.setTextSize(48);
+            canvas.drawText("— " + author, TEXT_WIDTH / 2f, baseline + 36, paint);
         }
         return bitmap;
     }
@@ -153,13 +154,13 @@ final class SceneFactory {
             if (image) {
                 float edge = Math.abs(luma - luminance(pixels[at + 1]))
                         + Math.abs(luma - luminance(pixels[at + w]));
-                weight = Math.min(1, luma * luma + edge * .3f);
+                weight = Math.min(1, luma * (.4f + .6f*luma) + edge * .3f);
             }
             if (weight > .06f && random.nextFloat() < weight) candidates.add(at);
         }
         if (candidates.isEmpty()) return null;
         float[] result = new float[(image ? TARGET_POINTS : TEXT_TARGET_POINTS) * 4];
-        float scale = .96f / Math.max(w, h);
+        float scale = (image ? .96f : 1.35f) / Math.max(w, h);
         for (int i = 0; i < result.length; i += 4) {
             if ((i & 4095)==0 && Thread.currentThread().isInterrupted()) throw new java.util.concurrent.CancellationException();
             int at = candidates.get(random.nextInt(candidates.size()));

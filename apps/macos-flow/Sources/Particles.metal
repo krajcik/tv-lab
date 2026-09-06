@@ -39,7 +39,9 @@ kernel void simulate(device const State* input [[buffer(0)]], device State* outp
     bool words=u.formation.w>.5;
     float local=phase-(props[id].base.z-.5)*min(.25,u.extra.y*.04);
     float likeness=smoothstep(0.,peak,local)*(1.-smoothstep(release,end,local));
+    float settled=smoothstep(peak-.6,peak+.4,local)*(1.-smoothstep(release,release+.8,local));
     float desired=props[id].base.w>.5 ? 0. : min(.99,likeness*(words?1.02:1.0626*(.9+.1*sin(t*2.7+seed*9.))));
+    if(props[id].base.w<.5)desired=mix(desired,min(.99,likeness*1.02),settled);
     capture+=(desired-capture)*(1.-exp(-dt*(desired<capture?7.:2.8)));
     if(capture<.00001)capture=0.;
     float2 grid=clamp((p+extent)/(2.*extent)*float2(64.,48.),float2(0.),float2(63.9999,47.9999));
@@ -47,11 +49,13 @@ kernel void simulate(device const State* input [[buffer(0)]], device State* outp
     float2 forceField=mix(mix(field[cell.y*65+cell.x],field[cell.y*65+cell.x+1],f.x),
         mix(field[(cell.y+1)*65+cell.x],field[(cell.y+1)*65+cell.x+1],f.x),f.y);
     forceField-=mean[0];
-    float2 target=targets[id % uint(u.extra.z)].xy+props[id].offset.xy;
+    float clarity=settled*smoothstep(.65,.98,capture);
+    float2 target=targets[id % uint(u.extra.z)].xy+props[id].offset.xy*mix(1.,words?.15:.35,clarity);
     float2 sway=float2(.023*sin(t*.29),-.02+.019*cos(t*.23));
-    target+=sway+(words?.002:.011)*float2(sin(t*2.8+seed*31.+target.y*18.),cos(t*2.4+seed*27.+target.x*19.));
-    float freedom=(.28+.72*(1.-capture)*(1.-capture))*(words?.36:1.),pull=(words?90.:30.)*capture*capture*capture;
-    float damping=(words?16.1:6.1)*capture,layer=.8+floor(seed*4.)*.15,response=1.8+fmod(seed,.25)*4.;
+    target+=sway+mix(words?.002:.011,words?.00015:.0006,clarity)*float2(sin(t*2.8+seed*31.+target.y*18.),cos(t*2.4+seed*27.+target.x*19.));
+    float freedom=(.28+.72*(1.-capture)*(1.-capture))*(words?.36:1.)*(1.-.92*clarity);
+    float pull=mix(words?90.:30.,words?160.:75.,clarity)*capture*capture*capture;
+    float damping=mix(words?16.1:6.1,words?22.:14.,clarity)*capture,layer=.8+floor(seed*4.)*.15,response=1.8+fmod(seed,.25)*4.;
     velocity+=((forceField*layer*motion-velocity)*response*freedom+(target-p)*pull-velocity*damping)*dt;
     float speed=length(velocity);if(speed>2.5)velocity*=2.5/speed;
     p+=velocity*dt;impact*=exp(-dt*5.);

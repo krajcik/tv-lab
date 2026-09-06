@@ -16,10 +16,17 @@ import java.util.Arrays;
 
 /** Run only on a disposable emulator; this resets its app preferences and imported test image. */
 public final class SmokeInstrumentation extends Instrumentation {
-    private boolean fontPreviews,imageInventory;
-    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments);fontPreviews=arguments!=null&&"true".equals(arguments.getString("fontPreviews"));imageInventory=arguments!=null&&"true".equals(arguments.getString("imageInventory"));start(); }
+    private boolean fontPreviews,imageInventory,clarityPreviews;
+    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments);clarityPreviews=arguments!=null&&"true".equals(arguments.getString("clarityPreviews"));fontPreviews=arguments!=null&&"true".equals(arguments.getString("fontPreviews"));imageInventory=arguments!=null&&"true".equals(arguments.getString("imageInventory"));start(); }
 
     @Override public void onStart() {
+        if(clarityPreviews){
+            Bundle result=new Bundle();Activity preview=null;
+            try{preview=startActivitySync(new Intent(getTargetContext(),SettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));result.putString("stream","PASS: clarity GPU captures\n"+ClarityPreviews.write(this,preview));finish(Activity.RESULT_OK,result);}
+            catch(Exception|AssertionError error){result.putString("stream",android.util.Log.getStackTraceString(error));finish(Activity.RESULT_CANCELED,result);}
+            finally{if(preview!=null){Activity current=preview;runOnMainSync(current::finish);}}
+            return;
+        }
         if(imageInventory){
             Bundle result=new Bundle();
             try{ImageInventory.verify(getTargetContext());result.putString("stream","PASS: all100 actual image entries decoded into distinct nonempty clouds\n");finish(Activity.RESULT_OK,result);}

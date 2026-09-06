@@ -20,7 +20,7 @@ final class ParticleRenderer implements GLSurfaceView.Renderer {
     private final FloatBuffer targetData;
     private final int[] states=new int[2], vaos=new int[2];
     private int properties, targets, fieldTexture, simulation, points, trails;
-    private int clockUniform, cycleUniform, formationUniform, pointPixels, trailPixels, fieldUniform, meanUniform;
+    private int clockUniform, cycleUniform, formationUniform, pointText, pointPixels, trailPixels, fieldUniform, meanUniform;
     private int fieldProgram, meanProgram, fieldBuffer, meanBuffer, meanTexture, emptyVao;
     private int centersUniform, shapesUniform, seedsUniform, flowTimeUniform, meanFieldUniform;
     private int current, targetScene=-1, width, height;
@@ -50,6 +50,7 @@ final class ParticleRenderer implements GLSurfaceView.Renderer {
         seedsUniform=GLES30.glGetUniformLocation(fieldProgram,"uSeeds[0]");
         flowTimeUniform=GLES30.glGetUniformLocation(fieldProgram,"uFlowTime");
         meanFieldUniform=GLES30.glGetUniformLocation(meanProgram,"uField");
+        pointText=GLES30.glGetUniformLocation(points,"uText");
         pointPixels=GLES30.glGetUniformLocation(points,"uPixels");
         trailPixels=GLES30.glGetUniformLocation(trails,"uPixels");
         GLES30.glGenBuffers(2,states,0);
@@ -139,6 +140,7 @@ final class ParticleRenderer implements GLSurfaceView.Renderer {
         GLES30.glDrawArraysInstanced(GLES30.GL_LINES,0,2,Math.min(10000,engine.count));
         for(int a=0;a<6;a++)GLES30.glVertexAttribDivisor(a,0);
         GLES30.glUseProgram(points);GLES30.glUniform2f(pointPixels,scale,ratio);
+        GLES30.glUniform1f(pointText,engine.timeline.text[engine.sceneIndex()]?1:0);
         GLES30.glDrawArrays(GLES30.GL_POINTS,0,engine.count);GLES30.glBindVertexArray(0);
     }
 
