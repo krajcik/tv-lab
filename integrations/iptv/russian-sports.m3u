@@ -1,0 +1,16 @@
+#EXTM3U
+# TV Lab: Russian sports channel candidates, checked 2026-09-07.
+# KHL Uplink: moving video verified on Philips; other channels need TV validation.
+# Language follows channel identity; audio has not been independently verified.
+# Linear channels can show replays. This is not a schedule of live matches.
+
+#EXTINF:-1 group-title="Хоккей",КХЛ
+https://fs.uplink.kz/telekanal_khl/mono.m3u8?token=onlinetv
+#EXTINF:-1 group-title="Хоккей",КХЛ Prime
+http://stream.mcquack.net/178/index.m3u8
+#EXTINF:-1 group-title="Футбол и другой спорт",Setanta Sports 1
+http://stream.mcquack.net/234/index.m3u8
+#EXTINF:-1 group-title="Спортивные каналы",viju+ Sport
+https://stream8.cinerama.uz/1229/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Бокс и MMA",MMA-TV
+https://stream8.cinerama.uz/1226/tracks-v1a1/mono.m3u8
